@@ -325,10 +325,12 @@ main { position: relative; z-index: 3; }
    03 · AVIS — rose poudré ; si avis-bg.mp4 existe, fond vidéo + typo claire
    ========================================================================== */
 .avis { overflow: hidden; }
-.avis-video { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s var(--ease); }
-.avis-vveil { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity 1.2s var(--ease); pointer-events: none;
+.avis-video { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.07);
+  transition: opacity 1.8s var(--ease), transform 2.6s var(--ease); }
+.avis-vveil { position: absolute; inset: 0; z-index: 0; opacity: 0; transition: opacity 1.8s var(--ease); pointer-events: none;
   background: linear-gradient(100deg, rgba(12,10,12,.85) 26%, rgba(12,10,12,.55) 68%, rgba(12,10,12,.4) 100%), radial-gradient(60% 80% at 80% 20%, rgba(230,51,127,.14), transparent 65%); }
-.avis.has-video .avis-video, .avis.has-video .avis-vveil { opacity: 1; }
+.avis.has-video .avis-video { opacity: 1; transform: scale(1); }
+.avis.has-video .avis-vveil { opacity: 1; }
 .avis.has-video { color: var(--porcelain); }
 .avis.has-video .eyebrow { color: var(--rose-mid); }
 .avis.has-video .avis-num { color: var(--fuchsia); }

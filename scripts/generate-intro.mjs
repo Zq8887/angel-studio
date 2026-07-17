@@ -52,7 +52,7 @@ let nd = 0, nm = 0;
 for (const f of dfiles) {
   const n = String(++nd).padStart(3, '0');
   const cleaned = await (await clean(`${SRC}/frames_desktop/${f}`, dm.width, dm.height)).jpeg({ quality: 96 }).toBuffer();
-  await sharp(cleaned).resize({ width: 1920, kernel: 'lanczos3' }).sharpen({ sigma: 0.55 }).webp({ quality: 72 }).toFile(`${D}${n}.webp`);
+  await sharp(cleaned).resize({ width: 1920, kernel: 'lanczos3' }).sharpen({ sigma: 0.55 }).webp({ quality: 74 }).toFile(`${D}${n}.webp`);
   await sharp(`${SRC}/frames_desktop/${f}`)
     .extract({ left: Math.round((dm.width - 800) / 2), top: 0, width: 800, height: dm.height })
     .sharpen({ sigma: 0.5 }).webp({ quality: 70 }).toFile(`${M}${n}.webp`);

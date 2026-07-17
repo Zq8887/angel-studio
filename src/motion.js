@@ -235,10 +235,13 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
     const avisVideo = document.querySelector('.avis-video');
     const avisSec = document.getElementById('avis');
     if (avisVideo && avisSec && avisVideo.dataset.src) {
+      // H.264 si le navigateur le décode, sinon repli WebM/VP9
+      const mp4Ok = avisVideo.canPlayType('video/mp4; codecs="avc1.42E01E"');
+      const srcUrl = mp4Ok ? avisVideo.dataset.src : (avisVideo.dataset.srcWebm || avisVideo.dataset.src);
       const vio = new IntersectionObserver((entries) => {
         entries.forEach((en) => {
           if (en.isIntersecting) {
-            if (!avisVideo.src) avisVideo.src = avisVideo.dataset.src;
+            if (!avisVideo.src) avisVideo.src = srcUrl;
             const pr = avisVideo.play(); if (pr) pr.catch(() => {});
           } else avisVideo.pause();
         });

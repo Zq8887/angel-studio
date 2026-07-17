@@ -32,11 +32,12 @@ aucune dépendance réseau au runtime (polices, images et carte auto-hébergées
   crossfade bas-gauche,
   fine ligne de progression rose, bouton **« Passer l'intro »** (avance rapide
   Lenis jusqu'au hero).
-- **239 frames des deux côtés** — interpolation de mouvement 60 fps (ffmpeg
-  `minterpolate`, mci/aobmc). Desktop : upscale lanczos 1470→1920 + accentuation
-  (13,3 Mo, q72). Mobile : recadrage centre 800px des frames desktop — l'écran
-  portrait n'affiche qu'une tranche ~300px, servie depuis la source la plus
-  définie (5,7 Mo, q70). Fondu sous-frame au dessin → aucune saccade.
+- **239 frames des deux côtés** — pipeline qualité max depuis la source :
+  débruitage (`hqdn3d`) → interpolation de mouvement 60 fps (`minterpolate`
+  mci/aobmc) → upscale lanczos 1470→1920 + accentuation (13,4 Mo, q74).
+  Mobile : recadrage centre 800px des frames desktop — l'écran portrait
+  n'affiche qu'une tranche ~300px, servie depuis la source la plus définie
+  (5,6 Mo, q70). Fondu sous-frame au dessin → aucune saccade.
   Le poster (photo HQ du client) est le LCP, `fetchpriority=high`.
 - **Connexion lente / `prefers-reduced-motion`** : poster direct + contenu
   visible, aucune intro, Lenis off.
@@ -68,9 +69,10 @@ Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro`, 900svh deskto
   Mathurins, Haussmann), marqueur fuchsia pulsant, lien Google Maps.
 - **Chaque ligne de prestation est un lien Planity** (flèche au survol) ;
   brillance balayée sur les CTA ; zoom doux des photos du salon au survol.
-- **Section avis** : déposer `avis-bg.mp4` (~5 s, muet, H.264) dans
-  `public/assets/angelstudio/` → fond vidéo + voile sombre + typo claire,
-  lecture lazy en vue, retiré proprement si absent (le rose reste).
+- **Section avis** : fond vidéo en boucle invisible (fin fondue sur le début,
+  10,5 s, muet) — `avis-bg.mp4` H.264 2,3 Mo + repli `avis-bg.webm` VP9 1 Mo,
+  lecture lazy en vue, fondu d'apparition lent + zoom arrière, voile sombre,
+  typo claire. Retiré proprement si absent (le rose reste).
 
 ## Données réelles (Planity — rien d'inventé)
 
@@ -95,11 +97,12 @@ Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro`, 900svh deskto
 | `hero.jpg/.webp/.avif` | Photo HQ des bacs = fin du film + fond du hero (LCP) |
 | `salon-1…3.jpg/.webp/.avif` | Photos du salon (`<picture>` AVIF/WebP/JPG) |
 | `thumb-*.jpg` | Miniatures hover des prestations |
+| `avis-bg.mp4` / `.webm` | Fond vidéo des avis (boucle invisible, muet) |
 | `rdv.jpg`, `favicon.png` | Widget « Réserver » & favicon |
 | `../fonts/*.woff2` | Cormorant Garamond (300/400/500/it.), Italiana, Inter |
 
-Régénérer depuis le kit : `npm run intro` (frames interpolées : dossier
-`interp/` du kit — nettoie le filigrane, convertit en WebP, recadre les photos
+Régénérer depuis le kit : `npm run intro` (frames débruitées+interpolées :
+dossier `interp2/` du kit — nettoie le filigrane, upscale, recadre les photos
 de sections). Intégrer des photos HQ : les déposer dans `photos_hq/` puis
 `npm run photos`.
 
