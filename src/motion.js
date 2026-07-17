@@ -1,7 +1,6 @@
-/* Moteur — même socle que Millenium : Lenis (scroll pondéré) + GSAP/ScrollTrigger
-   (intro scrubée sur canvas + révélations) + SplitType (masques).
-   Un seul easing, transform/opacity uniquement. Ici tout chuchote : révélations
-   douces, décalées, jamais de rebond. */
+/* Moteur — Lenis (scroll pondéré) + GSAP/ScrollTrigger (film scrubé sur canvas,
+   chapitres de visite, révélations chorégraphiées) + SplitType (masques).
+   Un seul easing (expo.out ≈ cubic-bezier(.16,1,.3,1)), transform/opacity only. */
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
@@ -22,10 +21,16 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
   try {
     lenis = new Lenis({ lerp: 0.07, wheelMultiplier: 0.9, smoothWheel: true });
     lenis.on('scroll', ScrollTrigger.update);
-    lenis.on('scroll', ({ scroll }) => nav && nav.classList.toggle('scrolled', scroll > 60));
+    // la nav passe en thème clair une fois le film quitté
+    lenis.on('scroll', ({ scroll }) => nav && nav.classList.toggle('scrolled', scroll > innerHeight * 0.6));
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
   } catch (e) { lenis = null; }
+
+  const scrollToY = (y, duration = 1.6) => {
+    if (lenis) lenis.scrollTo(y, { duration });
+    else scrollTo({ top: y, behavior: 'smooth' });
+  };
 
   /* ---- Ancres ---- */
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
@@ -35,14 +40,15 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
       const target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      if (lenis) lenis.scrollTo(target, { offset: 0, duration: 1.2 });
+      if (lenis) lenis.scrollTo(target, { offset: 0, duration: 1.4 });
       else target.scrollIntoView({ behavior: 'smooth' });
     });
   });
 
   /* ================================================================ */
-  /* INTRO scrubée PLEIN ÉCRAN : scène pinnée ; les images défilent,   */
-  /* puis, tout à la fin, le texte minuscule se révèle (masque + fondu).*/
+  /* LE FILM — canvas scrubé plein écran, long et lent (~6 écrans).     */
+  /* Chapitres : devanture (1-18) → on entre (19-34) → le salon         */
+  /* (35-98) → les bacs (99-121). Le texte se révèle tout à la fin.     */
   /* ================================================================ */
   if (withIntro && frames && frames.length) {
     const canvas = document.getElementById('intro-canvas');
@@ -76,33 +82,55 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
       const sp = new SplitType(accroche, { types: 'lines,words' });
       sp.lines.forEach((l) => l.classList.add('line-mask'));
       words = sp.words;
-      gsap.set(words, { yPercent: 110 });
+      gsap.set(words, { yPercent: 112 });
     }
     gsap.set(['.hero-eyebrow', '.hero-line'], { y: 14, autoAlpha: 0 });
 
     const idx = { i: 0 };
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: '#intro', start: 'top top', end: '+=250%', pin: true, scrub: 1,
+        // ~6 écrans de scroll pour dérouler le film — lent, cinématique.
+        // Pas de pin GSAP : le wrapper fait 700svh, la scène est sticky (CLS 0).
+        trigger: '#intro', start: 'top top', end: 'bottom bottom', scrub: 1,
         onUpdate: (self) => { if (self.progress > 0.9) html.classList.add('intro-done'); else html.classList.remove('intro-done'); },
       },
     });
-    // 1) défilement de TOUTES les images (les ~82 premiers % du scroll)
+    // 1) toutes les images défilent sur les ~82 premiers % du scroll
     tl.to(idx, { i: frames.length - 1, ease: 'none', duration: 8,
       onUpdate: () => { const i = Math.round(idx.i); if (i !== current) draw(i); } }, 0);
-    // 2) l'indice de scroll s'efface une fois les images finies
-    tl.to('.scroll-line', { autoAlpha: 0, duration: 0.7, ease: EASE }, 6.9);
-    // 3) SEULEMENT ensuite : voile + texte minuscule se révèlent (stagger doux)
+    // fine ligne de progression du film
+    tl.to('.intro-progress i', { scaleX: 1, ease: 'none', duration: 8 }, 0);
+
+    // 2) chapitres de la visite — crossfade calé sur les plans du film
+    const chapters = gsap.utils.toArray('.intro-chapter');
+    const times = [[0.15, 1.0], [1.18, 2.2], [2.4, 6.35], [6.55, 7.4]];
+    chapters.forEach((el, i) => {
+      if (!times[i]) return;
+      const [tin, tout] = times[i];
+      tl.fromTo(el, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: EASE }, tin);
+      tl.to(el, { autoAlpha: 0, y: -16, duration: 0.45, ease: EASE }, tout);
+    });
+
+    // 3) l'indice de scroll s'efface quand le film se termine
+    tl.to('.scroll-line', { autoAlpha: 0, duration: 0.6, ease: EASE }, 7.35);
+    // 4) le voile puis le texte — seulement une fois les images finies
     tl.to('.hero-veil', { autoAlpha: 1, duration: 1.3, ease: EASE }, 7.7);
     tl.to('.hero-eyebrow', { autoAlpha: 1, y: 0, duration: 1.0, ease: EASE }, 8.0);
     if (words.length) tl.to(words, { yPercent: 0, duration: 1.1, ease: EASE, stagger: 0.05 }, 8.15);
     tl.to('.hero-line', { autoAlpha: 1, y: 0, duration: 1.0, ease: EASE }, 8.75);
+
+    // « Passer l'intro » — avance rapide du film jusqu'au hero
+    const skip = document.getElementById('intro-skip');
+    if (skip) skip.addEventListener('click', () => {
+      const st = tl.scrollTrigger;
+      if (st) scrollToY(st.end + 2, 2.2);
+    });
   }
 
   /* ================================================================ */
   /* Nav — lien actif                                                  */
   /* ================================================================ */
-  const navMap = [['accueil', '#accueil'], ['salon', '#salon'], ['prestations', '#prestations'], ['contact', '#contact']];
+  const navMap = [['accueil', '#intro'], ['salon', '#salon'], ['prestations', '#prestations'], ['contact', '#contact']];
   const links = new Map(navMap.map(([id]) => [id, document.querySelector(`.nav-link[data-nav="${id}"]`)]));
   const activate = (id) => { links.forEach((l) => l && l.classList.remove('is-active')); const l = links.get(id); if (l) l.classList.add('is-active'); };
   navMap.forEach(([id, sel]) => {
@@ -138,13 +166,11 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
     /* miniature de prestation qui suit le curseur (lerp doux) */
     const thumb = document.querySelector('.presta-thumb');
     const thumbImg = thumb && thumb.querySelector('img');
-    const list = document.querySelector('.prestations');
-    if (thumb && thumbImg && list) {
+    if (thumb && thumbImg) {
       let px = innerWidth / 2, py = innerHeight / 2, cxp = px, cyp = py, active = false;
-      const move = (e) => { px = e.clientX; py = e.clientY; };
+      addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; }, { passive: true });
       const tloop = () => { cxp += (px - cxp) * 0.16; cyp += (py - cyp) * 0.16; thumb.style.transform = `translate3d(${cxp}px, ${cyp}px, 0) ${active ? 'scale(1)' : 'scale(.9)'}`; requestAnimationFrame(tloop); };
       requestAnimationFrame(tloop);
-      addEventListener('pointermove', move, { passive: true });
       document.querySelectorAll('.presta-row[data-thumb]').forEach((row) => {
         row.addEventListener('pointerenter', () => { const k = row.dataset.thumb; thumbImg.src = `/assets/angelstudio/thumb-${k}.jpg`; active = true; thumb.classList.add('show'); });
         row.addEventListener('pointerleave', () => { active = false; thumb.classList.remove('show'); });
@@ -153,39 +179,51 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
   }
 
   /* ================================================================ */
-  /* Révélations chorégraphiées (masque, jamais de fade brut)          */
+  /* Révélations chorégraphiées (masque / cascade, jamais de fade brut) */
   /* ================================================================ */
   try {
     document.querySelectorAll('[data-reveal-lines]').forEach((el) => {
       const split = new SplitType(el, { types: 'lines,words' });
       split.lines.forEach((l) => l.classList.add('line-mask'));
-      gsap.from(split.words, { yPercent: 110, duration: 1.0, ease: EASE, stagger: 0.05, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+      gsap.from(split.words, { yPercent: 112, duration: 1.0, ease: EASE, stagger: 0.045, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
     });
     document.querySelectorAll('[data-reveal]').forEach((el) => {
-      gsap.from(el, { y: 22, autoAlpha: 0, duration: 0.9, ease: EASE, scrollTrigger: { trigger: el, start: 'top 92%', once: true } });
+      gsap.from(el, { y: 24, autoAlpha: 0, duration: 0.9, ease: EASE, scrollTrigger: { trigger: el, start: 'top 92%', once: true } });
+    });
+    // listes en cascade (prestations, avis)
+    document.querySelectorAll('[data-reveal-list]').forEach((list) => {
+      const items = Array.from(list.children);
+      if (!items.length) return;
+      gsap.from(items, { y: 26, autoAlpha: 0, duration: 0.9, ease: EASE, stagger: 0.07, scrollTrigger: { trigger: list, start: 'top 88%', once: true } });
     });
     document.querySelectorAll('[data-reveal-media]').forEach((fig) => {
       const inner = fig.querySelector('img, video, iframe') || fig;
-      gsap.from(inner, { scale: 1.12, autoAlpha: 0, duration: 1.3, ease: EASE, scrollTrigger: { trigger: fig, start: 'top 90%', once: true } });
+      gsap.from(inner, { scale: 1.12, autoAlpha: 0, duration: 1.3, ease: EASE, scrollTrigger: { trigger: fig, start: 'top 88%', once: true } });
     });
 
-    // parallax décalé des photos du salon (profondeur du lieu)
+    // parallax décalé des photos du salon (profondeur du lieu) — sur la figure,
+    // la révélation (scale) reste sur l'image : aucun conflit de tween
     document.querySelectorAll('.salon-fig').forEach((fig, i) => {
-      const amt = [-9, -5, -7][i] ?? -6;
-      gsap.to(fig.querySelector('img'), { yPercent: amt, ease: 'none', scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: 0.6 } });
+      const amt = [-7, -4, -6][i] ?? -5;
+      gsap.to(fig, { yPercent: amt, ease: 'none', scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: 0.6 } });
     });
 
-    // compteur discret de la note (0 → 4,9)
+    // wordmark du footer — remonte doucement à l'approche
+    const mark = document.querySelector('.footer-mark');
+    if (mark) gsap.from(mark, { yPercent: 26, ease: 'none', scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: 0.6 } });
+
+
+    // compteur de la note (0 → 4,9)
     const avisNum = document.querySelector('.avis-num [data-count]');
     if (avisNum) {
       const o = { v: 0 };
-      gsap.to(o, { v: 4.9, duration: 1.4, ease: EASE, scrollTrigger: { trigger: avisNum, start: 'top 90%', once: true }, onUpdate: () => { avisNum.textContent = o.v.toFixed(1).replace('.', ','); } });
+      gsap.to(o, { v: 4.9, duration: 1.6, ease: EASE, scrollTrigger: { trigger: avisNum, start: 'top 90%', once: true }, onUpdate: () => { avisNum.textContent = o.v.toFixed(1).replace('.', ','); } });
     }
 
     ScrollTrigger.refresh();
   } catch (e) {
     ScrollTrigger.getAll().forEach((t) => t.kill());
-    document.querySelectorAll('[data-reveal],[data-reveal-lines],[data-reveal-media]').forEach((el) => gsap.set(el, { clearProps: 'all' }));
+    document.querySelectorAll('[data-reveal],[data-reveal-lines],[data-reveal-media],[data-reveal-list]').forEach((el) => gsap.set(el, { clearProps: 'all' }));
   }
 
   addEventListener('load', () => ScrollTrigger.refresh());

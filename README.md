@@ -1,11 +1,10 @@
 # Angel Studio chez Allure — Coiffeur à Paris 8e
 
-Site vitrine one-page **cinématique** — on **visite** le salon, on ne le lit pas.
-Même moteur technique que Millenium Studio (intro drone scrubée sur `<canvas>`,
-Lenis, révélations chorégraphiées, grain/vignette, curseur custom) — mais
-**l'inverse sur le texte** : aucune grosse écriture, aucun titre display. Tout
-chuchote. Serif fin (Cormorant Garamond / Italiana), micro-infos Inter, énormément
-de vide. Noir laqué dominant, fuchsia au compte-gouttes, chrome en filets.
+Site vitrine one-page **cinématique** : on **visite** le salon. Un film d'entrée
+scrubé au scroll (drone : la devanture → on entre → le salon → les bacs),
+**chapitré** comme un générique, qui s'ouvre sur un corps de page **clair et
+chaud** — porcelaine, crème, rose poudré, fuchsia en accent — façon éditorial
+parisien. Serif présent (Cormorant Garamond), wordmark Italiana, micro-typo Inter.
 
 ## Lancer
 
@@ -20,42 +19,55 @@ npm run preview   # prévisualiser le build
 
 Projet **Vite statique** — Vercel / Netlify / Cloudflare Pages : build
 `npm run build`, sortie `dist/`, Node ≥ 20.19. Aucune variable d'environnement,
-aucune dépendance réseau au runtime (polices, images et « carte » auto-hébergées).
+aucune dépendance réseau au runtime (polices, images et carte auto-hébergées).
 
-## L'intro (drone scrubé sur canvas, plein écran)
+## Le film d'entrée (canvas scrubé, chapitré, CLS 0)
 
-- **Desktop** : les **121 frames** sont préchargées (loader sobre à fine ligne
-  chrome), puis dessinées plein écran sur un `<canvas>` piloté au scroll (section
-  pinnée, `end:'+=250%'`). L'intro va de la devanture « ANGEL STUDIO » → l'entrée
-  → le tour du salon → l'arrêt sur les bacs roses. Tout à la fin, le texte
-  minuscule (accroche + micro-ligne) se révèle par-dessus, sous un masque.
-- **Mobile** : mêmes frames en version allégée (**97 frames**, `frames_mobile`),
-  intro identique. Le poster (dernière frame) est le LCP, préchargé en priorité ;
-  les frames se chargent derrière en `fetchpriority=low`.
-- **Connexion lente / `prefers-reduced-motion`** : poster direct + nav, aucune
-  intro, Lenis off, animations coupées, contenu visible.
-- La **dernière frame (121) = fond du hero** → continuité invisible intro → hero.
+- **Architecture sans pin GSAP** : le wrapper `.hero-intro` fait `700svh` dès le
+  premier paint et la scène est `position: sticky`. Aucun spacer inséré au
+  runtime → **zéro layout shift, garanti**. Le scrub GSAP mappe la progression
+  du wrapper sur l'index de frame dessiné sur `<canvas>` (cover, dpr ≤ 2).
+- **Chapitres de la visite** calés sur les plans du film :
+  `01 — La devanture` (frames 1-18) · `02 — On entre` (19-34) ·
+  `03 — Le salon` (35-98) · `04 — Les bacs` (99-121), crossfade bas-gauche,
+  fine ligne de progression rose, bouton **« Passer l'intro »** (avance rapide
+  Lenis jusqu'au hero).
+- **Desktop : 121 frames** · **mobile : 97 frames allégées** — préchargées par
+  le loader (wordmark + fine ligne qui se remplit). Le poster (frame 121, les
+  bacs roses) est le LCP, préchargé en `fetchpriority=high`.
+- **Connexion lente / `prefers-reduced-motion`** : poster direct + contenu
+  visible, aucune intro, Lenis off.
+- À la fin du film : voile radial + révélation du texte (masques, mot à mot),
+  la nav et le widget « Réserver » apparaissent, puis **la feuille claire
+  glisse sur le film** (coins arrondis, ombre portée — overlap en `transform`,
+  jamais en marge : CLS 0).
 
-Régler la durée de l'intro : `end:'+=250%'` dans `src/motion.js`.
+Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro { height: 700svh }`)
+— monter = plus lent.
 
-## Direction artistique (la retenue = le luxe)
+## Direction artistique
 
-- **Aucun titre display.** Le texte principal ne dépasse jamais ~2rem. Seul le
-  wordmark du footer (Italiana) est grand — mais élégant, coupé par le bord bas.
-- Un seul easing partout : `cubic-bezier(0.16,1,0.3,1)`. Révélations décalées
-  (masque `overflow:hidden` + `yPercent`), jamais de fade brut ni de rebond.
-- Grain film + vignette globaux ; halos rose très doux placés en asymétrie ;
-  transitions par fondu de fond (surface continue, jamais de coupe).
-- Micro-interactions : curseur chrome, boutons magnétiques (±6px), soulignement
-  de nav tracé, miniature de prestation qui suit le curseur au survol.
-- Fuchsia **rare** (un filet, un hover, le marqueur de carte) ; noir laqué
-  dominant ; chrome en filets. Un seul widget flottant (« Réserver »).
+- **Hero sombre cinématique → corps clair éditorial** : sections porcelaine /
+  crème / rose poudré, footer noir. La nav (pill de verre) passe d'elle-même du
+  sombre au clair après le hero.
+- Typo éditoriale : accroche `clamp(2.5rem → 4.6rem)`, headlines serif
+  `clamp(2.1rem → 3.7rem)` avec italiques fuchsia, listes de prix en filets
+  pointillés, wordmark monumental Italiana coupé par le bas du footer.
+- Un seul easing partout (`cubic-bezier(.16,1,.3,1)`), révélations sous masque
+  (SplitType), cascades (`data-reveal-list`), parallax léger des photos,
+  wordmark du footer qui remonte au scroll, curseur `mix-blend-mode:difference`,
+  boutons magnétiques (±6px), miniature de prestation qui suit le curseur.
+- Le widget flottant « Réserver » **s'efface automatiquement** quand un CTA de
+  réservation est déjà visible (contact, footer) — jamais deux CTA en collision.
+- Carte du 8e stylisée (auto-hébergée, zéro réseau) : rues réelles (Pasquier,
+  Mathurins, Haussmann), marqueur fuchsia pulsant, lien Google Maps.
 
 ## Données réelles (Planity — rien d'inventé)
 
-- **Prestations & tarifs** : Femme, Homme, Enfant (réservation par téléphone),
-  Technique — reproduits fidèlement (40 → 270 €).
-- **Adresse** : 41 rue Pasquier, 75008 Paris · **Tél** : 01 42 27 60 60.
+- **Prestations & tarifs** : Femme / Homme / Enfant (jusqu'à 10 ans, réservation
+  par téléphone) / Technique — reproduits fidèlement (22 → 270 €).
+- **Adresse** : 41 rue Pasquier, 75008 Paris · **Tél** : 01 42 27 60 60 ·
+  Métro Saint-Lazare · Saint-Augustin · Madeleine.
 - **Horaires** : Lun & Dim fermés · Mar/Mer/Ven/Sam 10h30–18h · Jeu 10h30–12h
   puis 12h30–20h (jour courant surligné automatiquement).
 - **Avis** : 4,9 · 1017 avis (Accueil 4,9 · Propreté 4,9 · Cadre 4,9 · Qualité 5,0).
@@ -68,21 +80,22 @@ Régler la durée de l'intro : `end:'+=250%'` dans `src/motion.js`.
 
 | Fichier | Rôle |
 | --- | --- |
-| `intro/desktop/001…121.webp` | Frames de l'intro scrubée (desktop) |
+| `intro/desktop/001…121.webp` | Frames du film (desktop) |
 | `intro/mobile/001…097.webp` | Frames allégées (mobile) |
-| `hero.jpg` / `.webp` / `.avif` | Poster = frame 121 (bacs roses) = fond du hero |
-| `salon-1…3.*` | Photos du salon (postes, cheminée + chevreuil rose, bacs) |
-| `thumb-*.*` | Miniatures hover des prestations (femme / homme / enfant / technique) |
+| `hero.jpg/.webp/.avif` | Poster = frame 121 = fond du hero (LCP) |
+| `salon-1…3.jpg/.webp/.avif` | Photos du salon (`<picture>` AVIF/WebP/JPG) |
+| `thumb-*.jpg` | Miniatures hover des prestations |
 | `rdv.jpg`, `favicon.png` | Widget « Réserver » & favicon |
-| `../fonts/*.woff2` | Cormorant Garamond (300/400/500/it.), Italiana, Inter — auto-hébergées |
+| `../fonts/*.woff2` | Cormorant Garamond (300/400/500/it.), Italiana, Inter |
 
-Régénérer depuis le kit : `npm run intro` (nettoie le filigrane, convertit en
-WebP, décline le poster, recadre les photos de sections).
+Régénérer depuis le kit : `npm run intro` (nettoie le filigrane CapCut,
+convertit en WebP, décline le poster, recadre les photos de sections).
 
-## Performance & accessibilité
+## Performance & accessibilité (mesuré, build de prod)
 
-`transform`/`opacity` uniquement, `will-change` retiré, ≤ 4 `backdrop-filter`.
-Mesuré (preview local) : **LCP desktop ~0,2 s · mobile ~0,15 s · CLS 0**.
-`prefers-reduced-motion` : Lenis off, poster direct, animations coupées.
-H1 unique mais visuellement discret, `alt` réels, `schema.org HairSalon`,
-OG image = poster du hero.
+- **LCP ~156 ms desktop · ~172 ms mobile · CLS 0 · 0 erreur console** (preview
+  local, Chromium). `transform`/`opacity` uniquement, dpr canvas ≤ 2,
+  ≤ 4 `backdrop-filter`.
+- `prefers-reduced-motion` : poster direct, tout visible, animations coupées.
+- H1 unique, `alt` réels, `schema.org` HairSalon complet (adresse, tél, note
+  4,9/1017, horaires), OG image = poster du hero.

@@ -20,8 +20,19 @@ document.querySelectorAll('#hours-list li').forEach((li) => {
 
 /* ---- Nav : repli "scrolled" avant le moteur ---- */
 const nav = document.getElementById('nav');
-const setNavScrolled = () => { if (nav) nav.classList.toggle('scrolled', scrollY > 80); };
+const setNavScrolled = () => { if (nav) nav.classList.toggle('scrolled', scrollY > innerHeight - 90); };
 addEventListener('scroll', setNavScrolled, { passive: true });
+
+/* ---- Le widget flottant s'efface quand un CTA de réservation est visible ---- */
+const ctaTargets = document.querySelectorAll('.contact-cta, .footer');
+if (ctaTargets.length && 'IntersectionObserver' in window) {
+  const seen = new Set();
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => { en.isIntersecting ? seen.add(en.target) : seen.delete(en.target); });
+    html.classList.toggle('rdv-off', seen.size > 0);
+  }, { rootMargin: '0px' });
+  ctaTargets.forEach((el) => io.observe(el));
+}
 
 /* ---- Ancres en repli natif (le moteur les reprend avec Lenis) ---- */
 function nativeAnchors() {
