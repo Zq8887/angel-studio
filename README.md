@@ -23,10 +23,10 @@ aucune dépendance réseau au runtime (polices, images et carte auto-hébergées
 
 ## Le film d'entrée (canvas scrubé, chapitré, CLS 0)
 
-- **Architecture sans pin GSAP** : le wrapper `.hero-intro` fait `700svh` dès le
-  premier paint et la scène est `position: sticky`. Aucun spacer inséré au
+- **Architecture sans pin GSAP** : le wrapper `.hero-intro` est haut dès le
+  premier paint (`900svh` desktop · `1200svh` au toucher, où le swipe a de l'inertie) et la scène est `position: sticky`. Aucun spacer inséré au
   runtime → **zéro layout shift, garanti**. Le scrub GSAP mappe la progression
-  du wrapper sur l'index de frame dessiné sur `<canvas>` (cover, dpr ≤ 2).
+  du wrapper sur un index de frame **fractionnaire** : fondu-enchaîné entre la frame i et la frame i+1 directement sur le `<canvas>` — mouvement lisse quel que soit le rythme, sans un octet de plus (cover, dpr ≤ 2).
 - **Chapitres de la visite** calés sur les plans du film :
   `01 — La devanture` (frames 1-18) · `02 — On entre` (19-34) ·
   `03 — Le salon` (35-98) · `04 — Les bacs` (99-121), crossfade bas-gauche,
@@ -42,7 +42,7 @@ aucune dépendance réseau au runtime (polices, images et carte auto-hébergées
   glisse sur le film** (coins arrondis, ombre portée — overlap en `transform`,
   jamais en marge : CLS 0).
 
-Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro { height: 700svh }`)
+Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro`, 900svh desktop / 1200svh toucher)
 — monter = plus lent.
 
 ## Direction artistique

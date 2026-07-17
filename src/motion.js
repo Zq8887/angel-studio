@@ -63,13 +63,22 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
       else { h = ch; w = ch * ir; x = (cw - w) / 2; y = 0; }
       ctx.drawImage(img, x, y, w, h);
     };
-    const draw = (i) => { current = i; drawCover(frames[i]); };
+    /* index FRACTIONNAIRE : fondu-enchaîné entre la frame i et la frame i+1
+       directement sur le canvas → mouvement parfaitement lisse quel que soit
+       le rythme du scroll, sans une image de plus à télécharger. */
+    const draw = (x) => {
+      current = x;
+      const i = Math.max(0, Math.min(frames.length - 1, Math.floor(x)));
+      const f = x - i;
+      drawCover(frames[i]);
+      if (f > 0.02 && frames[i + 1]) { ctx.globalAlpha = f; drawCover(frames[i + 1]); ctx.globalAlpha = 1; }
+    };
     const resize = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
       cw = canvas.clientWidth || innerWidth; ch = canvas.clientHeight || innerHeight;
       canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawCover(frames[current < 0 ? 0 : current]);
+      draw(current < 0 ? 0 : current);
     };
     resize();
     addEventListener('resize', resize, { passive: true });
@@ -89,15 +98,16 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
     const idx = { i: 0 };
     const tl = gsap.timeline({
       scrollTrigger: {
-        // ~6 écrans de scroll pour dérouler le film — lent, cinématique.
-        // Pas de pin GSAP : le wrapper fait 700svh, la scène est sticky (CLS 0).
-        trigger: '#intro', start: 'top top', end: 'bottom bottom', scrub: 1,
+        // Long et lent — la hauteur du wrapper (.intro-mode .hero-intro) fixe
+        // la durée. Pas de pin GSAP : scène sticky (CLS 0).
+        trigger: '#intro', start: 'top top', end: 'bottom bottom', scrub: 1.2,
         onUpdate: (self) => { if (self.progress > 0.9) html.classList.add('intro-done'); else html.classList.remove('intro-done'); },
       },
     });
     // 1) toutes les images défilent sur les ~82 premiers % du scroll
+    //    (index fractionnaire → fondu-enchaîné continu entre les frames)
     tl.to(idx, { i: frames.length - 1, ease: 'none', duration: 8,
-      onUpdate: () => { const i = Math.round(idx.i); if (i !== current) draw(i); } }, 0);
+      onUpdate: () => { if (Math.abs(idx.i - current) > 0.01) draw(idx.i); } }, 0);
     // fine ligne de progression du film
     tl.to('.intro-progress i', { scaleX: 1, ease: 'none', duration: 8 }, 0);
 

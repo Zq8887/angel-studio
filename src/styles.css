@@ -176,11 +176,14 @@ main { position: relative; z-index: 3; }
 /* ==========================================================================
    HERO — le film. Chapitré : devanture → entrée → salon → bacs
    ========================================================================== */
-/* Architecture SANS pin GSAP : le wrapper fait 700svh dès le premier paint
-   (100svh visibles + 600svh de scrub), la scène est sticky. Aucun spacer
-   inséré, aucun layout shift → CLS 0 garanti. */
+/* Architecture SANS pin GSAP : le wrapper est haut dès le premier paint
+   (100svh visibles + le reste de scrub), la scène est sticky. Aucun spacer
+   inséré, aucun layout shift → CLS 0 garanti.
+   La hauteur = la durée du film. Plus longue au toucher : un swipe emporte
+   beaucoup d'inertie, il faut plus de piste pour le même rythme. */
 .hero-intro { position: relative; height: 100svh; min-height: 620px; background: var(--noir); }
-.intro-mode .hero-intro { height: 700svh; }
+.intro-mode .hero-intro { height: 900svh; }
+@media (pointer: coarse) { .intro-mode .hero-intro { height: 1200svh; } }
 .stage { position: sticky; top: 0; width: 100%; height: 100svh; overflow: hidden; background: var(--noir); }
 .stage-poster, .stage-poster img, .stage-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .stage-poster { z-index: 0; }
@@ -204,10 +207,10 @@ main { position: relative; z-index: 3; }
 .no-intro .hero-veil { opacity: 1; }
 
 /* chapitres de la visite — bas-gauche, crossfade piloté par le scrub */
-.intro-chapters { position: absolute; z-index: 4; left: var(--pad-x); bottom: clamp(64px, 13vh, 110px); pointer-events: none; }
-.intro-chapter { position: absolute; left: 0; bottom: 0; display: flex; flex-direction: column; gap: 10px; opacity: 0; white-space: nowrap; }
-.intro-chapter .num { font-family: var(--sans); font-weight: 600; font-size: .62rem; letter-spacing: .34em; text-transform: uppercase; color: var(--rose-mid); }
-.intro-chapter .lbl { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(1.5rem, 2.4vw, 2.2rem); line-height: 1; color: var(--porcelain); text-shadow: 0 4px 30px rgba(0,0,0,.55); }
+.intro-chapters { position: absolute; z-index: 4; left: var(--pad-x); bottom: clamp(72px, 14vh, 120px); pointer-events: none; }
+.intro-chapter { position: absolute; left: 0; bottom: 0; display: flex; flex-direction: column; gap: 14px; opacity: 0; white-space: nowrap; }
+.intro-chapter .num { font-family: var(--sans); font-weight: 600; font-size: .78rem; letter-spacing: .34em; text-transform: uppercase; color: var(--rose-mid); }
+.intro-chapter .lbl { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(2.4rem, 4.6vw, 4.4rem); line-height: 1; color: var(--porcelain); text-shadow: 0 6px 40px rgba(0,0,0,.6); }
 .no-intro .intro-chapters { display: none; }
 
 /* fine ligne de progression du film, en bas */
