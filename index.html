@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Angel Studio — Coiffeur à Paris 8e</title>
+  <meta name="description" content="Angel Studio chez Allure — salon de coiffure raffiné à Paris 8e. Équipe artistique L'Oréal Professionnel. 41 rue Pasquier, 75008 Paris. Noté 4,9 sur 1017 avis. Sur rendez-vous via Planity.">
+  <meta name="theme-color" content="#0C0A0C">
+  <link rel="icon" type="image/png" href="/assets/angelstudio/favicon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Angel Studio — Coiffeur à Paris 8e">
+  <meta property="og:description" content="Salon de coiffure raffiné, Paris 8e. Équipe artistique L'Oréal Professionnel. 4,9 · 1017 avis.">
+  <meta property="og:image" content="/assets/angelstudio/hero.jpg">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" as="image" href="/assets/angelstudio/hero.avif" type="image/avif" fetchpriority="high">
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cormorant-300.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cormorant-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/italiana-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-400.woff2" crossorigin>
+  <link rel="stylesheet" href="/src/styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HairSalon",
+    "name": "Angel Studio chez Allure",
+    "description": "Salon de coiffure raffiné à Paris 8e — coupe, coiffage, couleur, balayage & mèches. Équipe artistique L'Oréal Professionnel. Sur rendez-vous.",
+    "image": "/assets/angelstudio/hero.jpg",
+    "telephone": "+33142276060",
+    "priceRange": "22–270 €",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "41 rue Pasquier",
+      "postalCode": "75008",
+      "addressLocality": "Paris",
+      "addressCountry": "FR"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Friday","Saturday"], "opens": "10:30", "closes": "18:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "10:30", "closes": "12:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "12:30", "closes": "20:00" }
+    ],
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "1017", "bestRating": "5" },
+    "sameAs": [ "https://www.planity.com/angel-studio-chez-allure-75017-paris" ]
+  }
+  </script>
+
+  <!-- Décide AVANT le paint : intro cinématique (desktop) vs accès direct (mobile/reduced/lente) -->
+  <script>
+    (function () {
+      var d = document.documentElement, mode = 'no-intro';
+      try {
+        var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var conn = navigator.connection || {};
+        var slow = conn.saveData === true || /^([23]g|slow-2g)$/.test(conn.effectiveType || '');
+        // intro cinématique desktop ET mobile (frames allégées) ; poster direct si lente/reduced
+        if (!reduced && !slow) mode = 'intro-mode';
+      } catch (e) {}
+      d.classList.add(mode);
+    })();
+  </script>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+
+  <!-- curseur custom -->
+  <div class="cursor" aria-hidden="true"></div>
+
+  <!-- LOADER (intro seulement) — sobre -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-mark">
+      <span class="loader-name">Angel Studio</span>
+      <span class="loader-bar"><span class="loader-fill" id="loader-fill"></span></span>
+    </div>
+  </div>
+
+  <!-- NAV — pill de verre fine -->
+  <header class="nav" id="nav">
+    <a class="brand" href="#accueil"><span class="brand-name">Angel Studio</span></a>
+    <div class="nav-right">
+      <nav class="links" aria-label="Navigation principale">
+        <a href="#accueil" class="nav-link" data-nav="accueil">Accueil</a>
+        <a href="#salon" class="nav-link" data-nav="salon">Le salon</a>
+        <a href="#prestations" class="nav-link" data-nav="prestations">Prestations</a>
+        <a href="#contact" class="nav-link" data-nav="contact">Contact</a>
+      </nav>
+      <a class="btn btn-sm" data-magnetic href="https://www.planity.com/angel-studio-chez-allure-75017-paris" target="_blank" rel="noopener">Prendre RDV</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ==================================================================
+         HERO — frame 121 (bacs roses) en fond ; texte minuscule par-dessus
+         ================================================================== -->
+    <section class="hero-intro" id="intro">
+      <div class="stage" id="stage">
+        <picture class="stage-poster">
+          <source type="image/avif" srcset="/assets/angelstudio/hero.avif">
+          <source type="image/webp" srcset="/assets/angelstudio/hero.webp">
+          <img class="stage-img" src="/assets/angelstudio/hero.jpg"
+               width="1470" height="630" fetchpriority="high" decoding="async"
+               alt="Angel Studio, Paris 8e — bacs à shampoing et fauteuils fuchsia translucides devant le bar noir laqué">
+        </picture>
+        <canvas class="stage-canvas" id="intro-canvas" aria-hidden="true"></canvas>
+        <div class="intro-fx" aria-hidden="true"></div>
+        <div class="hero-veil" aria-hidden="true"></div>
+
+        <div class="hero" id="accueil">
+          <p class="eyebrow hero-eyebrow" data-hero>Paris 8e · chez Allure</p>
+          <h1 class="hero-accroche" data-hero-title>Révélez la star qui est en vous.</h1>
+          <p class="micro hero-line" data-hero>
+            <span>41 rue Pasquier, Paris 8e</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span><span class="star">&#9733;</span> 4,9 · 1017 avis</span>
+          </p>
+        </div>
+
+        <div class="scroll-line" aria-hidden="true">
+          <span class="lbl">Visiter</span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         01 · LE SALON
+         ================================================================== -->
+    <section class="section salon" id="salon">
+      <div class="salon-intro">
+        <p class="eyebrow" data-reveal>Le salon</p>
+        <p class="headline" data-reveal-lines>À mi-chemin entre la <em>galerie d'art</em> et les loges d'un studio.</p>
+      </div>
+
+      <div class="salon-gallery">
+        <figure class="salon-fig a" data-reveal-media>
+          <img src="/assets/angelstudio/salon-1.jpg" width="1170" height="570" loading="lazy" decoding="async"
+               alt="L'enfilade des postes de coiffage d'Angel Studio, colonne fuchsia et enseigne lumineuse au fond">
+          <figcaption class="media-cap">Les postes de coiffage</figcaption>
+        </figure>
+        <figure class="salon-fig b" data-reveal-media>
+          <img src="/assets/angelstudio/salon-2.jpg" width="1000" height="600" loading="lazy" decoding="async"
+               alt="Coin cheminée d'Angel Studio — chevreuil rose, papier peint visages et mannequin chromé">
+          <figcaption class="media-cap">La cheminée</figcaption>
+        </figure>
+        <figure class="salon-fig c" data-reveal-media>
+          <img src="/assets/angelstudio/salon-3.jpg" width="1000" height="380" loading="lazy" decoding="async"
+               alt="Les bacs à shampoing et fauteuils fuchsia translucides face au bar noir laqué">
+          <figcaption class="media-cap">Les bacs</figcaption>
+        </figure>
+      </div>
+
+      <div class="team-line" data-reveal>
+        <p><span class="name">Jérôme Guezou, Sébastien Bafcop &amp; Jérôme Debruxelles</span> — équipe artistique <span class="loreal">L'Oréal Professionnel</span>.</p>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         02 · PRESTATIONS — vraies données Planity, liste sobre
+         ================================================================== -->
+    <section class="section prestations" id="prestations">
+      <div class="presta-thumb" aria-hidden="true"><img src="/assets/angelstudio/thumb-femme.jpg" alt="" width="200" height="148"></div>
+      <div class="presta-head">
+        <div class="section-head" style="margin-bottom:0">
+          <p class="eyebrow" data-reveal>Prestations</p>
+          <p class="headline" data-reveal-lines>Le geste juste, le <em>prix juste</em>.</p>
+        </div>
+      </div>
+
+      <div class="presta-cat" data-reveal>
+        <div class="cat-label"><h3>Femme</h3></div>
+        <div class="presta-list">
+          <div class="presta-row" data-thumb="femme"><span class="presta-name">Shampoing Coiffage <span style="color:var(--muted-2)">— court</span></span><span class="presta-meta"><span class="presta-dur">30 min</span><span class="presta-price">40 €</span></span></div>
+          <div class="presta-row" data-thumb="femme"><span class="presta-name">Shampoing Coiffage <span style="color:var(--muted-2)">— long</span></span><span class="presta-meta"><span class="presta-dur">45 min</span><span class="presta-price">45 €</span></span></div>
+          <div class="presta-row" data-thumb="femme"><span class="presta-name">Shampoing Coupe Coiffage <span style="color:var(--muted-2)">— court</span></span><span class="presta-meta"><span class="presta-dur">30 min</span><span class="presta-price">70 €</span></span></div>
+          <div class="presta-row" data-thumb="femme"><span class="presta-name">Shampoing Coupe Coiffage <span style="color:var(--muted-2)">— long</span></span><span class="presta-meta"><span class="presta-dur">45 min</span><span class="presta-price">75 €</span></span></div>
+          <div class="presta-row" data-thumb="femme"><span class="presta-name">Attache Rapide Chignon</span><span class="presta-meta"><span class="presta-dur">45 min</span><span class="presta-price">75 €</span></span></div>
+        </div>
+      </div>
+
+      <div class="presta-cat" data-reveal>
+        <div class="cat-label"><h3>Homme</h3></div>
+        <div class="presta-list">
+          <div class="presta-row" data-thumb="homme"><span class="presta-name">Forfait Homme Shampoing Coupe Coiffage</span><span class="presta-meta"><span class="presta-dur">30 min</span><span class="presta-price">45 €</span></span></div>
+          <div class="presta-row" data-thumb="homme"><span class="presta-name">Color 5</span><span class="presta-meta"><span class="presta-dur">15 min</span><span class="presta-price">22 €</span></span></div>
+        </div>
+      </div>
+
+      <div class="presta-cat" data-reveal>
+        <div class="cat-label"><h3>Enfant</h3><span class="note">jusqu'à 10 ans · réservation par téléphone</span></div>
+        <div class="presta-list">
+          <div class="presta-row" data-thumb="enfant"><span class="presta-name">Garçon</span><span class="presta-meta"><span class="presta-dur">30 min</span><span class="presta-price">40 €</span></span></div>
+          <div class="presta-row" data-thumb="enfant"><span class="presta-name">Fille</span><span class="presta-meta"><span class="presta-dur">30 min</span><span class="presta-price">60 €</span></span></div>
+        </div>
+      </div>
+
+      <div class="presta-cat" data-reveal>
+        <div class="cat-label"><h3>Technique</h3></div>
+        <div class="presta-list">
+          <div class="presta-row" data-thumb="technique"><span class="presta-name">Couleur Shampoing Brushing</span><span class="presta-meta"><span class="presta-dur">1 h 30</span><span class="presta-price">100 – 105 €</span></span></div>
+          <div class="presta-row" data-thumb="technique"><span class="presta-name">Couleur Shampoing Coupe Brushing</span><span class="presta-meta"><span class="presta-dur">2 h</span><span class="presta-price">125 – 130 €</span></span></div>
+          <div class="presta-row" data-thumb="technique"><span class="presta-name">Mèches / Balayage + Shampoing + Brushing <span style="color:var(--muted-2)">— cheveux courts</span></span><span class="presta-meta"><span class="presta-dur">2 h</span><span class="presta-price">165 – 175 €</span></span></div>
+          <div class="presta-row" data-thumb="technique"><span class="presta-name">Balayage / mèches Shampoing Coupe Brushing</span><span class="presta-meta"><span class="presta-dur">2 h 30</span><span class="presta-price">195 – 210 €</span></span></div>
+          <div class="presta-row" data-thumb="technique"><span class="presta-name">Couleur + Balayage Shampoing Brushing</span><span class="presta-meta"><span class="presta-dur">2 h</span><span class="presta-price">255 – 270 €</span></span></div>
+        </div>
+      </div>
+
+      <div class="presta-foot" data-reveal>
+        <a class="link-fine" href="https://www.planity.com/angel-studio-chez-allure-75017-paris" target="_blank" rel="noopener">Voir toutes les prestations
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-lg" data-magnetic href="https://www.planity.com/angel-studio-chez-allure-75017-paris" target="_blank" rel="noopener">Prendre rendez-vous</a>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         03 · AVIS — 4,9 · 1017 avis (retenue)
+         ================================================================== -->
+    <section class="section avis" id="avis">
+      <div class="avis-grid">
+        <div class="avis-score">
+          <p class="eyebrow" data-reveal>Avis · Google</p>
+          <div data-reveal>
+            <span class="avis-num"><span data-count="4,9">4,9</span><span class="on5">/5</span></span>
+          </div>
+          <span class="avis-count" data-reveal>1017 clients ont laissé leur avis</span>
+          <dl class="avis-breakdown" data-reveal>
+            <div><dt>Accueil</dt><dd>4,9</dd></div>
+            <div><dt>Propreté</dt><dd>4,9</dd></div>
+            <div><dt>Cadre &amp; ambiance</dt><dd>4,9</dd></div>
+            <div><dt>Qualité de la prestation</dt><dd>5,0</dd></div>
+          </dl>
+        </div>
+        <div class="avis-quotes">
+          <figure class="avis-quote" data-reveal>
+            <blockquote>Une équipe à l'écoute, qui rattrape tout avec un vrai soin du détail. On ressort transformée.</blockquote>
+            <cite>Cliente vérifiée · Google</cite>
+          </figure>
+          <figure class="avis-quote" data-reveal>
+            <blockquote>Des coiffeurs de talent — ce petit supplément d'âme qui fait toute la différence.</blockquote>
+            <cite>Client vérifié · Google</cite>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         04 · CONTACT / RÉSERVATION
+         ================================================================== -->
+    <section class="section contact" id="contact">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p class="eyebrow" data-reveal>Nous trouver</p>
+          <p class="headline" data-reveal-lines>41 rue Pasquier, <em>Paris 8e</em>.</p>
+
+          <dl class="contact-list" data-reveal>
+            <div>
+              <dt>Adresse</dt>
+              <dd>41 rue Pasquier<br>75008 Paris</dd>
+            </div>
+            <div>
+              <dt>Téléphone</dt>
+              <dd><a href="tel:+33142276060">01 42 27 60 60</a></dd>
+            </div>
+            <div>
+              <dt>Horaires</dt>
+              <dd>
+                <ul class="hours" id="hours-list">
+                  <li data-day="1"><span class="day">Lundi</span><span class="closed">Fermé</span></li>
+                  <li data-day="2"><span class="day">Mardi</span><span>10h30 – 18h</span></li>
+                  <li data-day="3"><span class="day">Mercredi</span><span>10h30 – 18h</span></li>
+                  <li data-day="4"><span class="day">Jeudi</span><span>10h30 – 12h · 12h30 – 20h</span></li>
+                  <li data-day="5"><span class="day">Vendredi</span><span>10h30 – 18h</span></li>
+                  <li data-day="6"><span class="day">Samedi</span><span>10h30 – 18h</span></li>
+                  <li data-day="0"><span class="day">Dimanche</span><span class="closed">Fermé</span></li>
+                </ul>
+              </dd>
+            </div>
+          </dl>
+
+          <a class="btn btn-lg contact-cta" data-magnetic href="https://www.planity.com/angel-studio-chez-allure-75017-paris" target="_blank" rel="noopener">Prendre rendez-vous</a>
+        </div>
+
+        <a class="map-card" data-reveal-media href="https://www.google.com/maps/search/?api=1&query=Angel+Studio+chez+Allure%2C+41+rue+Pasquier%2C+75008+Paris" target="_blank" rel="noopener" aria-label="Voir Angel Studio sur Google Maps">
+          <span class="map-streets" aria-hidden="true"></span>
+          <span class="map-av" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span><span class="a4"></span></span>
+          <span class="map-glow" aria-hidden="true"></span>
+          <span class="map-pin" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12A7 7 0 0 0 5 10c0 5.5 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.3" fill="currentColor"/></svg>
+          </span>
+          <span class="map-cta">Voir sur Google&nbsp;Maps
+            <svg class="arr" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================================================================
+       FOOTER — wordmark grand mais élégant, coupé par le bord bas
+       ================================================================== -->
+  <footer class="footer" id="footer">
+    <div class="footer-top">
+      <div class="footer-links">
+        <a href="https://www.planity.com/angel-studio-chez-allure-75017-paris" target="_blank" rel="noopener">Réserver</a>
+        <a href="tel:+33142276060">01 42 27 60 60</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=Angel+Studio+chez+Allure%2C+41+rue+Pasquier%2C+75008+Paris" target="_blank" rel="noopener">Itinéraire</a>
+      </div>
+      <p class="footer-loc">41 rue Pasquier · Paris 8e</p>
+    </div>
+    <div class="footer-mark" aria-hidden="true">Angel Studio</div>
+    <p class="footer-legal">© <span id="year">2026</span> Angel Studio chez Allure</p>
+  </footer>
+
+  <!-- widget flottant unique -->
+  <a class="rdv-widget" data-magnetic href="https://www.planity.com/angel-studio-chez-allure-75017-paris" target="_blank" rel="noopener" aria-label="Réserver sur Planity">
+    <span class="thumb"><img src="/assets/angelstudio/rdv.jpg" width="470" height="320" alt="" loading="lazy" decoding="async"></span>
+    <span class="txt">
+      <span class="k">Sur rendez-vous</span>
+      <span class="v">Réserver
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </span>
+  </a>
+
+  <div class="grain" aria-hidden="true"></div>
+</body>
+</html>
