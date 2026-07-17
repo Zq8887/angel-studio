@@ -1,0 +1,1 @@
+Déposez ici les photos HQ du salon (voir scripts/import-photos.mjs pour les noms attendus), puis lancez : npm run photos

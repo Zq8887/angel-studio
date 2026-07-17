@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "intro": "node scripts/generate-intro.mjs"
+    "intro": "node scripts/generate-intro.mjs",
+    "photos": "node scripts/import-photos.mjs"
   },
   "devDependencies": {
     "sharp": "^0.35.3",

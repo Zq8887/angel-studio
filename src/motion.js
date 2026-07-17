@@ -123,6 +123,9 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
 
     // 3) l'indice de scroll s'efface quand le film se termine
     tl.to('.scroll-line', { autoAlpha: 0, duration: 0.6, ease: EASE }, 7.35);
+    // 3bis) le canvas s'efface → le film « résout » vers le poster HQ dessous
+    //       (remplacer hero.jpg/webp/avif par une vraie photo suffit)
+    tl.to('.stage-canvas', { autoAlpha: 0, duration: 1.4, ease: EASE }, 7.85);
     // 4) le voile puis le texte — seulement une fois les images finies
     tl.to('.hero-veil', { autoAlpha: 1, duration: 1.3, ease: EASE }, 7.7);
     tl.to('.hero-eyebrow', { autoAlpha: 1, y: 0, duration: 1.0, ease: EASE }, 8.0);
