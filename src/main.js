@@ -51,7 +51,8 @@ function nativeAnchors() {
 /* ================================================================== */
 if (introMode) {
   const dir = desktop ? 'desktop' : 'mobile';
-  const N = desktop ? 121 : 97;
+  // frames interpolées 60 fps (mouvement compensé) — 239 desktop / 191 mobile
+  const N = desktop ? 239 : 191;
   const frames = new Array(N);
   const fillEl = document.getElementById('loader-fill');
   const loader = document.getElementById('loader');
@@ -85,7 +86,7 @@ if (introMode) {
     frames[i] = img;
   }
   // filet : démarre quand même si un préchargement traîne
-  setTimeout(start, 9000);
+  setTimeout(start, 12000);
 
 } else {
   /* ================================================================== */

@@ -28,16 +28,19 @@ aucune dépendance réseau au runtime (polices, images et carte auto-hébergées
   runtime → **zéro layout shift, garanti**. Le scrub GSAP mappe la progression
   du wrapper sur un index de frame **fractionnaire** : fondu-enchaîné entre la frame i et la frame i+1 directement sur le `<canvas>` — mouvement lisse quel que soit le rythme, sans un octet de plus (cover, dpr ≤ 2).
 - **Chapitres de la visite** calés sur les plans du film :
-  `01 — La devanture` (frames 1-18) · `02 — On entre` (19-34) ·
-  `03 — Le salon` (35-98) · `04 — Les bacs` (99-121), crossfade bas-gauche,
+  `01 — La devanture` · `02 — On entre` · `03 — Le salon` · `04 — Les bacs`,
+  crossfade bas-gauche,
   fine ligne de progression rose, bouton **« Passer l'intro »** (avance rapide
   Lenis jusqu'au hero).
-- **Desktop : 121 frames** · **mobile : 97 frames allégées** — préchargées par
-  le loader (wordmark + fine ligne qui se remplit). Le poster (frame 121, les
-  bacs roses) est le LCP, préchargé en `fetchpriority=high`.
+- **Desktop : 239 frames** · **mobile : 191 frames** — interpolation de
+  mouvement 60 fps (ffmpeg `minterpolate`, mci/aobmc) appliquée aux frames du
+  kit, puis fondu-enchaîné sous-frame au dessin → aucune saccade. Préchargées
+  par le loader. Le poster (photo HQ du client) est le LCP, `fetchpriority=high`.
 - **Connexion lente / `prefers-reduced-motion`** : poster direct + contenu
   visible, aucune intro, Lenis off.
-- À la fin du film : voile radial + révélation du texte (masques, mot à mot),
+- À la fin du film, le canvas s'estompe : le film **résout vers la photo HQ**
+  du client (`photos_hq/` + `npm run photos`). Puis voile radial + révélation
+  du texte (masques, mot à mot),
   la nav et le widget « Réserver » apparaissent, puis **la feuille claire
   glisse sur le film** (coins arrondis, ombre portée — overlap en `transform`,
   jamais en marge : CLS 0).
@@ -80,16 +83,18 @@ Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro`, 900svh deskto
 
 | Fichier | Rôle |
 | --- | --- |
-| `intro/desktop/001…121.webp` | Frames du film (desktop) |
-| `intro/mobile/001…097.webp` | Frames allégées (mobile) |
-| `hero.jpg/.webp/.avif` | Poster = frame 121 = fond du hero (LCP) |
+| `intro/desktop/001…239.webp` | Frames du film interpolées 60 fps (8,9 Mo) |
+| `intro/mobile/001…191.webp` | Frames mobiles interpolées (3,6 Mo) |
+| `hero.jpg/.webp/.avif` | Photo HQ des bacs = fin du film + fond du hero (LCP) |
 | `salon-1…3.jpg/.webp/.avif` | Photos du salon (`<picture>` AVIF/WebP/JPG) |
 | `thumb-*.jpg` | Miniatures hover des prestations |
 | `rdv.jpg`, `favicon.png` | Widget « Réserver » & favicon |
 | `../fonts/*.woff2` | Cormorant Garamond (300/400/500/it.), Italiana, Inter |
 
-Régénérer depuis le kit : `npm run intro` (nettoie le filigrane CapCut,
-convertit en WebP, décline le poster, recadre les photos de sections).
+Régénérer depuis le kit : `npm run intro` (frames interpolées : dossier
+`interp/` du kit — nettoie le filigrane, convertit en WebP, recadre les photos
+de sections). Intégrer des photos HQ : les déposer dans `photos_hq/` puis
+`npm run photos`.
 
 ## Performance & accessibilité (mesuré, build de prod)
 

@@ -46,9 +46,10 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
   });
 
   /* ================================================================ */
-  /* LE FILM — canvas scrubé plein écran, long et lent (~6 écrans).     */
-  /* Chapitres : devanture (1-18) → on entre (19-34) → le salon         */
-  /* (35-98) → les bacs (99-121). Le texte se révèle tout à la fin.     */
+  /* LE FILM — canvas scrubé plein écran, long et lent.                 */
+  /* Frames interpolées 60 fps. Chapitres : devanture (1-36) →          */
+  /* on entre (37-67) → le salon (68-194) → les bacs (195-239).         */
+  /* Le texte se révèle tout à la fin.                                  */
   /* ================================================================ */
   if (withIntro && frames && frames.length) {
     const canvas = document.getElementById('intro-canvas');

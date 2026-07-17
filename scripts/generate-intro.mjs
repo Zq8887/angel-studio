@@ -13,7 +13,7 @@ import sharp from 'sharp';
 import { mkdir, readdir, rm } from 'node:fs/promises';
 import { existsSync, statSync } from 'node:fs';
 
-const SRC = process.argv[2] || '/home/user/angelstudio_kit/angel_kit_v2';
+const SRC = process.argv[2] || '/home/user/angelstudio_kit/angel_kit_v2/interp';
 if (!SRC || !existsSync(SRC)) { console.error('Usage: node scripts/generate-intro.mjs <dossier kit>'); process.exit(1); }
 const OUT = new URL('../public/assets/angelstudio/', import.meta.url).pathname;
 const D = `${OUT}intro/desktop/`, M = `${OUT}intro/mobile/`;
@@ -54,8 +54,8 @@ async function convert(dir, out, w, h, quality) {
 /* frames */
 const dm = await sharp(`${SRC}/frames_desktop/001.jpg`).metadata();
 const mm = await sharp(`${SRC}/frames_mobile/001.jpg`).metadata();
-const nd = await convert(`${SRC}/frames_desktop`, D, dm.width, dm.height, 72);
-const nm = await convert(`${SRC}/frames_mobile`, M, mm.width, mm.height, 68);
+const nd = await convert(`${SRC}/frames_desktop`, D, dm.width, dm.height, 68);
+const nm = await convert(`${SRC}/frames_mobile`, M, mm.width, mm.height, 64);
 console.log(`frames desktop: ${nd} (${dm.width}x${dm.height}), mobile: ${nm} (${mm.width}x${mm.height})`);
 
 /* poster = dernière frame (121, les bacs roses) nettoyée = fond du hero */
@@ -85,18 +85,18 @@ async function emit(name, frame, region, { q = 80, wq = 76, aq = 58 } = {}) {
 }
 
 /* LE SALON — 3 grandes photos (point de vue net, cadrage asymétrique) */
-await emit('salon-1', '030', { left: 150, top: 30, width: 1170, height: 570 });   // enfilade des postes + enseigne
-await emit('salon-2', '060', { left: 300, top: 0,  width: 1000, height: 600 });   // cheminée + chevreuil rose
-await emit('salon-3', '112', { left: 330, top: 250, width: 1000, height: 380 });  // bacs roses, fauteuils fuchsia
+await emit('salon-1', '059', { left: 150, top: 30, width: 1170, height: 570 });   // enfilade des postes + enseigne
+await emit('salon-2', '119', { left: 300, top: 0,  width: 1000, height: 600 });   // cheminée + chevreuil rose
+await emit('salon-3', '223', { left: 330, top: 250, width: 1000, height: 380 });  // bacs roses, fauteuils fuchsia
 
 /* PRESTATIONS — miniatures hover (près du curseur), une par catégorie */
-await emit('thumb-femme',    '090', { left: 140, top: 90,  width: 470, height: 470 }); // miroir + coiffage
-await emit('thumb-homme',    '030', { left: 300, top: 200, width: 420, height: 420 }); // fauteuil transparent
-await emit('thumb-enfant',   '110', { left: 380, top: 290, width: 430, height: 330 }); // bac rose doux
-await emit('thumb-technique','090', { left: 1010, top: 120, width: 430, height: 470 }); // étagère produits couleur
+await emit('thumb-femme',    '179', { left: 140, top: 90,  width: 470, height: 470 }); // miroir + coiffage
+await emit('thumb-homme',    '059', { left: 300, top: 200, width: 420, height: 420 }); // fauteuil transparent
+await emit('thumb-enfant',   '219', { left: 380, top: 290, width: 430, height: 330 }); // bac rose doux
+await emit('thumb-technique','179', { left: 1010, top: 120, width: 430, height: 470 }); // étagère produits couleur
 
 /* widget flottant « Réserver » */
-await emit('rdv', '112', { left: 420, top: 300, width: 470, height: 320 }, { q: 82 });
+await emit('rdv', '223', { left: 420, top: 300, width: 470, height: 320 }, { q: 82 });
 
 /* favicon — aile d'ange / A fin, fuchsia sur noir laqué */
 const faviconSvg = `
