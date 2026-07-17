@@ -40,23 +40,25 @@ async function clean(file, w, h) {
   return sharp(file).composite([{ input: region, left: 0, top: 0 }, { input: gradSvg(w, h), left: 0, top: 0 }]);
 }
 
-async function convert(dir, out, w, h, quality) {
-  const files = (await readdir(dir)).filter((f) => /\.jpe?g$/i.test(f)).sort();
-  let i = 0;
-  for (const f of files) {
-    const n = String(++i).padStart(3, '0');
-    const img = await clean(`${dir}/${f}`, w, h);
-    await img.webp({ quality }).toFile(`${out}${n}.webp`);
-  }
-  return i;
-}
-
-/* frames */
+/* frames — qualité maximale possible depuis la source :
+   - desktop : upscale lanczos 1470→1920 + accentuation → plus net que
+     l'upscale bilinéaire du navigateur (l'écran affiche ~2100px en cover) ;
+   - mobile : recadrage CENTRE 800x630 des frames desktop (l'écran portrait
+     n'affiche qu'une tranche ~300px : autant la servir depuis la source la
+     plus définie). Le recadrage élimine le coin filigrané → aucun nettoyage. */
 const dm = await sharp(`${SRC}/frames_desktop/001.jpg`).metadata();
-const mm = await sharp(`${SRC}/frames_mobile/001.jpg`).metadata();
-const nd = await convert(`${SRC}/frames_desktop`, D, dm.width, dm.height, 68);
-const nm = await convert(`${SRC}/frames_mobile`, M, mm.width, mm.height, 64);
-console.log(`frames desktop: ${nd} (${dm.width}x${dm.height}), mobile: ${nm} (${mm.width}x${mm.height})`);
+const dfiles = (await readdir(`${SRC}/frames_desktop`)).filter((f) => /\.jpe?g$/i.test(f)).sort();
+let nd = 0, nm = 0;
+for (const f of dfiles) {
+  const n = String(++nd).padStart(3, '0');
+  const cleaned = await (await clean(`${SRC}/frames_desktop/${f}`, dm.width, dm.height)).jpeg({ quality: 96 }).toBuffer();
+  await sharp(cleaned).resize({ width: 1920, kernel: 'lanczos3' }).sharpen({ sigma: 0.55 }).webp({ quality: 72 }).toFile(`${D}${n}.webp`);
+  await sharp(`${SRC}/frames_desktop/${f}`)
+    .extract({ left: Math.round((dm.width - 800) / 2), top: 0, width: 800, height: dm.height })
+    .sharpen({ sigma: 0.5 }).webp({ quality: 70 }).toFile(`${M}${n}.webp`);
+  nm++;
+}
+console.log(`frames desktop: ${nd} (1920px, upscale+sharpen), mobile: ${nm} (crop centre 800x${dm.height})`);
 
 /* poster = dernière frame (121, les bacs roses) nettoyée = fond du hero */
 const files = (await readdir(`${SRC}/frames_desktop`)).filter((f) => /\.jpe?g$/i.test(f)).sort();

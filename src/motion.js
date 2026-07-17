@@ -212,7 +212,10 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
     });
     document.querySelectorAll('[data-reveal-media]').forEach((fig) => {
       const inner = fig.querySelector('img, video, iframe') || fig;
-      gsap.from(inner, { scale: 1.12, autoAlpha: 0, duration: 1.3, ease: EASE, scrollTrigger: { trigger: fig, start: 'top 88%', once: true } });
+      // clearProps à la fin : le zoom hover CSS reprend la main sur le transform
+      gsap.from(inner, { scale: 1.12, autoAlpha: 0, duration: 1.3, ease: EASE,
+        scrollTrigger: { trigger: fig, start: 'top 88%', once: true },
+        onComplete: () => gsap.set(inner, { clearProps: 'all' }) });
     });
 
     // parallax décalé des photos du salon (profondeur du lieu) — sur la figure,
@@ -226,6 +229,24 @@ export function initMotion({ withIntro = false, finePointer = false, frames = nu
     const mark = document.querySelector('.footer-mark');
     if (mark) gsap.from(mark, { yPercent: 26, ease: 'none', scrollTrigger: { trigger: '.footer', start: 'top bottom', end: 'bottom bottom', scrub: 0.6 } });
 
+
+    // fond vidéo optionnel de la section avis (avis-bg.mp4) — lazy, muet,
+    // retiré proprement si le fichier n'existe pas (le fond rose reste)
+    const avisVideo = document.querySelector('.avis-video');
+    const avisSec = document.getElementById('avis');
+    if (avisVideo && avisSec && avisVideo.dataset.src) {
+      const vio = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            if (!avisVideo.src) avisVideo.src = avisVideo.dataset.src;
+            const pr = avisVideo.play(); if (pr) pr.catch(() => {});
+          } else avisVideo.pause();
+        });
+      }, { rootMargin: '250px 0px' });
+      avisVideo.addEventListener('loadeddata', () => avisSec.classList.add('has-video'));
+      avisVideo.addEventListener('error', () => { vio.disconnect(); avisVideo.remove(); });
+      vio.observe(avisSec);
+    }
 
     // compteur de la note (0 → 4,9)
     const avisNum = document.querySelector('.avis-num [data-count]');

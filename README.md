@@ -32,10 +32,12 @@ aucune dépendance réseau au runtime (polices, images et carte auto-hébergées
   crossfade bas-gauche,
   fine ligne de progression rose, bouton **« Passer l'intro »** (avance rapide
   Lenis jusqu'au hero).
-- **Desktop : 239 frames** · **mobile : 191 frames** — interpolation de
-  mouvement 60 fps (ffmpeg `minterpolate`, mci/aobmc) appliquée aux frames du
-  kit, puis fondu-enchaîné sous-frame au dessin → aucune saccade. Préchargées
-  par le loader. Le poster (photo HQ du client) est le LCP, `fetchpriority=high`.
+- **239 frames des deux côtés** — interpolation de mouvement 60 fps (ffmpeg
+  `minterpolate`, mci/aobmc). Desktop : upscale lanczos 1470→1920 + accentuation
+  (13,3 Mo, q72). Mobile : recadrage centre 800px des frames desktop — l'écran
+  portrait n'affiche qu'une tranche ~300px, servie depuis la source la plus
+  définie (5,7 Mo, q70). Fondu sous-frame au dessin → aucune saccade.
+  Le poster (photo HQ du client) est le LCP, `fetchpriority=high`.
 - **Connexion lente / `prefers-reduced-motion`** : poster direct + contenu
   visible, aucune intro, Lenis off.
 - À la fin du film, le canvas s'estompe : le film **résout vers la photo HQ**
@@ -64,6 +66,11 @@ Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro`, 900svh deskto
   réservation est déjà visible (contact, footer) — jamais deux CTA en collision.
 - Carte du 8e stylisée (auto-hébergée, zéro réseau) : rues réelles (Pasquier,
   Mathurins, Haussmann), marqueur fuchsia pulsant, lien Google Maps.
+- **Chaque ligne de prestation est un lien Planity** (flèche au survol) ;
+  brillance balayée sur les CTA ; zoom doux des photos du salon au survol.
+- **Section avis** : déposer `avis-bg.mp4` (~5 s, muet, H.264) dans
+  `public/assets/angelstudio/` → fond vidéo + voile sombre + typo claire,
+  lecture lazy en vue, retiré proprement si absent (le rose reste).
 
 ## Données réelles (Planity — rien d'inventé)
 
@@ -83,8 +90,8 @@ Durée du film : la hauteur du wrapper (`.intro-mode .hero-intro`, 900svh deskto
 
 | Fichier | Rôle |
 | --- | --- |
-| `intro/desktop/001…239.webp` | Frames du film interpolées 60 fps (8,9 Mo) |
-| `intro/mobile/001…191.webp` | Frames mobiles interpolées (3,6 Mo) |
+| `intro/desktop/001…239.webp` | Frames 1920px interpolées 60 fps (13,3 Mo) |
+| `intro/mobile/001…239.webp` | Frames crop centre 800px (5,7 Mo) |
 | `hero.jpg/.webp/.avif` | Photo HQ des bacs = fin du film + fond du hero (LCP) |
 | `salon-1…3.jpg/.webp/.avif` | Photos du salon (`<picture>` AVIF/WebP/JPG) |
 | `thumb-*.jpg` | Miniatures hover des prestations |
