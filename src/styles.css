@@ -274,6 +274,8 @@ main { position: relative; z-index: 3; }
 .salon-fig::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(130% 100% at 50% 30%, transparent 62%, rgba(32,23,34,.18) 100%); }
 .salon-fig.a { grid-column: 1 / 8; aspect-ratio: 16 / 10; }
 .salon-fig.b { grid-column: 9 / 13; aspect-ratio: 4 / 5; margin-bottom: clamp(3rem, 11vh, 9rem); }
+/* photo paysage dans un cadre portrait : cadrer sur l'enseigne à l'angelot */
+.salon-fig.b img { object-position: 26% 50%; }
 .salon-fig.c { grid-column: 3 / 12; aspect-ratio: 21 / 9; margin-top: clamp(2rem, 6vh, 5rem); }
 .media-cap { position: absolute; left: 20px; bottom: 18px; z-index: 2; font-family: var(--sans); font-size: .64rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.55); }
 
