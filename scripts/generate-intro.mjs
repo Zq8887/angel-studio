@@ -13,7 +13,7 @@ import sharp from 'sharp';
 import { mkdir, readdir, rm } from 'node:fs/promises';
 import { existsSync, statSync } from 'node:fs';
 
-const SRC = process.argv[2] || '/home/user/angelstudio_kit/angel_kit_v2/interp';
+const SRC = process.argv[2] || '/home/user/angelstudio_kit/angel_kit_v2/interp2';
 if (!SRC || !existsSync(SRC)) { console.error('Usage: node scripts/generate-intro.mjs <dossier kit>'); process.exit(1); }
 const OUT = new URL('../public/assets/angelstudio/', import.meta.url).pathname;
 const D = `${OUT}intro/desktop/`, M = `${OUT}intro/mobile/`;
